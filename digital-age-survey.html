@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Digital Age Survey</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --purple:#673ab7;
+    --purple-dark:#4a2d8a;
+    --bg:#f0ebf8;
+    --card:#ffffff;
+    --border:#dadce0;
+    --text:#202124;
+    --text-secondary:#5f6368;
+    --radius:8px;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0;
+    padding:0;
+    min-height:100%;
+    background:var(--bg);
+    font-family:'Roboto', Arial, sans-serif;
+    color:var(--text);
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  .wrap{
+    max-width:680px;
+    margin:0 auto;
+    padding:24px 16px 60px;
+  }
+
+  /* ---------- Header card ---------- */
+  .header-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    border-top:10px solid var(--purple);
+    padding:24px 24px 20px;
+    margin-bottom:16px;
+  }
+  .header-card h1{
+    font-size:28px;
+    font-weight:400;
+    margin:0 0 8px;
+    color:var(--text);
+  }
+  .header-card .desc{
+    font-size:14px;
+    color:var(--text);
+    line-height:1.5;
+    margin:0 0 14px;
+  }
+  .anon-note{
+    font-size:13px;
+    color:var(--text-secondary);
+    border-top:1px solid var(--border);
+    padding-top:14px;
+    line-height:1.5;
+  }
+  .required-note{
+    font-size:13px;
+    color:#d93025;
+    margin-top:10px;
+  }
+
+  /* ---------- Question cards ---------- */
+  .q-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:22px 24px 24px;
+    margin-bottom:16px;
+  }
+  .q-title{
+    font-size:16px;
+    font-weight:400;
+    margin:0 0 16px;
+    line-height:1.4;
+  }
+  .q-title .req{
+    color:#d93025;
+    margin-left:2px;
+  }
+
+  .options label{
+    display:flex;
+    align-items:center;
+    padding:10px 4px;
+    cursor:pointer;
+    font-size:14px;
+    border-radius:4px;
+    transition:background .15s ease;
+  }
+  .options label:hover{ background:#f8f6fc; }
+
+  input[type="radio"]{
+    appearance:none;
+    -webkit-appearance:none;
+    width:18px;
+    height:18px;
+    min-width:18px;
+    border:2px solid #5f6368;
+    border-radius:50%;
+    margin-right:14px;
+    position:relative;
+    cursor:pointer;
+    transition:border-color .15s ease, width .25s ease, height .25s ease, min-width .25s ease;
+  }
+  input[type="radio"]:checked{ border-color:var(--purple); }
+  input[type="radio"]:checked::after{
+    content:"";
+    position:absolute;
+    top:50%; left:50%;
+    width:10px; height:10px;
+    background:var(--purple);
+    border-radius:50%;
+    transform:translate(-50%,-50%);
+  }
+  input[type="radio"]:focus-visible{
+    outline:2px solid var(--purple);
+    outline-offset:2px;
+  }
+
+  .text-input{
+    width:100%;
+    border:none;
+    border-bottom:1px solid var(--border);
+    padding:6px 2px 8px;
+    font-size:14px;
+    font-family:inherit;
+    background:transparent;
+    color:var(--text);
+    outline:none;
+  }
+  .text-input:focus{ border-bottom:2px solid var(--purple); padding-bottom:7px; }
+  .text-input.short{ max-width:320px; }
+
+  /* ---------- Footer / submit ---------- */
+  .footer-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin:8px 4px 30px;
+  }
+  .submit-btn{
+    background:var(--purple);
+    color:#fff;
+    border:none;
+    padding:10px 24px;
+    border-radius:4px;
+    font-size:14px;
+    font-weight:500;
+    cursor:pointer;
+    font-family:inherit;
+  }
+  .submit-btn:hover{ background:var(--purple-dark); }
+  .clear-link{
+    color:var(--purple);
+    font-size:14px;
+    text-decoration:none;
+    cursor:pointer;
+  }
+  .clear-link:hover{ text-decoration:underline; }
+
+  .gform-footer{
+    text-align:center;
+    color:var(--text-secondary);
+    font-size:12px;
+    line-height:1.8;
+    margin-top:10px;
+  }
+
+  /* ---------- Question 4: flower effect ---------- */
+  .flower-field-wrap{ position:relative; }
+  .floating-flower{
+    position:absolute;
+    bottom:6px;
+    font-size:18px;
+    pointer-events:none;
+    animation:floatUp 1.4s ease-out forwards;
+    user-select:none;
+  }
+  @keyframes floatUp{
+    0%{ transform:translateY(0) rotate(0deg) scale(1); opacity:1; }
+    100%{ transform:translateY(-70px) rotate(25deg) scale(1.15); opacity:0; }
+  }
+
+  .toast{
+    position:fixed;
+    left:50%;
+    bottom:28px;
+    transform:translateX(-50%) translateY(20px);
+    background:#323232;
+    color:#fff;
+    padding:14px 20px;
+    border-radius:6px;
+    font-size:14px;
+    box-shadow:0 3px 8px rgba(0,0,0,.25);
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .25s ease, transform .25s ease;
+    z-index:100;
+  }
+  .toast.show{
+    opacity:1;
+    transform:translateX(-50%) translateY(0);
+  }
+
+  /* ---------- Question 6: instagram gag ---------- */
+  .ig-options{ display:flex; flex-direction:column; gap:2px; }
+  .ig-row{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    padding:8px 4px;
+  }
+  .ig-btn-circle{
+    border:2px solid #5f6368;
+    border-radius:50%;
+    background:transparent;
+    cursor:pointer;
+    transition:width .3s ease, height .3s ease, border-color .2s ease;
+    padding:0;
+  }
+  .ig-btn-circle.selected{ border-color:var(--purple); background:var(--purple); }
+  .ig-label{ font-size:14px; cursor:default; }
+  .ig-message{
+    font-size:13px;
+    color:var(--text-secondary);
+    margin-top:6px;
+    min-height:18px;
+    font-style:italic;
+  }
+  .ig-btn-circle.no-selected{
+    border-color:var(--purple);
+    background:transparent;
+  }
+  .ig-error{
+    display:none;
+    font-size:13px;
+    color:#d93025;
+    margin-top:6px;
+  }
+  .ig-error.show{ display:block; }
+  .ig-textbox-wrap{ margin-top:14px; display:none; }
+
+  /* ---------- Page transitions ---------- */
+  #page2{ display:none; }
+  .fade-in{ animation:fadeIn .4s ease; }
+  @keyframes fadeIn{
+    from{ opacity:0; transform:translateY(6px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
+  .thanks-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    border-top:10px solid var(--purple);
+    padding:40px 28px;
+    text-align:center;
+  }
+  .thanks-card h1{
+    font-size:24px;
+    font-weight:400;
+    margin:0 0 10px;
+  }
+  .thanks-card p{
+    font-size:15px;
+    color:var(--text-secondary);
+    line-height:1.6;
+  }
+  .thanks-card .heart{ font-size:30px; margin-top:4px; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- ============ PAGE 1 : THE FORM ============ -->
+  <div id="page1">
+
+    <div class="header-card">
+      <h1>Digital Age Survey</h1>
+      <p class="desc">A few quick questions about growing up online, tech, and the future. Takes about 2 minutes.</p>
+      <div class="anon-note">
+        This is an anonymous survey. Your name and email are not recorded, and your responses cannot be traced back to you.
+      </div>
+      <div class="required-note">* Indicates a required question</div>
+    </div>
+
+    <form id="surveyForm">
+
+      <!-- Q1 -->
+      <div class="q-card">
+        <p class="q-title">What age group do you think is most affected by cyberbullying?<span class="req">*</span></p>
+        <div class="options">
+          <label><input type="radio" name="q1" value="20+" required> 20+</label>
+          <label><input type="radio" name="q1" value="14-16"> 14–16</label>
+          <label><input type="radio" name="q1" value="11-13"> 11–13</label>
+          <label><input type="radio" name="q1" value="17-19"> 17–19</label>
+        </div>
+      </div>
+
+      <!-- Q2 -->
+      <div class="q-card">
+        <p class="q-title">Do you prefer digital or traditional note-taking for college?<span class="req">*</span></p>
+        <div class="options">
+          <label><input type="radio" name="q2" value="Digital" required> Digital</label>
+          <label><input type="radio" name="q2" value="Traditional"> Traditional</label>
+        </div>
+      </div>
+
+      <!-- Q3 -->
+      <div class="q-card">
+        <p class="q-title">How dangerous do you think AI can get in the next 5–10 years?<span class="req">*</span></p>
+        <div class="options">
+          <label><input type="radio" name="q3" value="Very dangerous" required> Very dangerous</label>
+          <label><input type="radio" name="q3" value="Slightly dangerous"> Slightly dangerous</label>
+          <label><input type="radio" name="q3" value="Minimal danger"> Minimal danger</label>
+          <label><input type="radio" name="q3" value="Not dangerous at all"> Not dangerous at all</label>
+        </div>
+      </div>
+
+      <!-- Q4: favorite movie/show field with special effect -->
+      <div class="q-card">
+        <p class="q-title">What's your favorite TV show/movie/series?<span class="req">*</span></p>
+        <div class="flower-field-wrap">
+          <input type="text" class="text-input short" id="flowerInput" name="q4" placeholder="Your answer" autocomplete="off" required>
+        </div>
+      </div>
+
+      <!-- Q5 -->
+      <div class="q-card">
+        <p class="q-title">What country/place is on your bucket list?<span class="req">*</span></p>
+        <input type="text" class="text-input short" name="q5" placeholder="Your answer" autocomplete="off" required>
+      </div>
+
+      <!-- Q6: instagram gag -->
+      <div class="q-card">
+        <p class="q-title">Can I get your Instagram?<span class="req">*</span></p>
+        <div class="ig-options" id="igOptions">
+          <div class="ig-row">
+            <button type="button" class="ig-btn-circle" id="igYesBtn" style="width:18px;height:18px;" data-value="yes" aria-label="Yes"></button>
+            <span class="ig-label">Yes</span>
+          </div>
+          <div class="ig-row">
+            <button type="button" class="ig-btn-circle" id="igNoBtn" style="width:18px;height:18px;" data-value="no" aria-label="No"></button>
+            <span class="ig-label">No</span>
+          </div>
+        </div>
+        <div class="ig-message" id="igMessage"></div>
+        <div class="ig-textbox-wrap" id="igTextboxWrap">
+          <input type="text" class="text-input short" id="igHandleInput" name="q6_handle" placeholder="@yourhandle" autocomplete="off">
+        </div>
+        <div class="ig-error" id="igError">This is a required question.</div>
+        <input type="hidden" name="q6" id="q6Hidden">
+      </div>
+
+      <div class="footer-row">
+        <button type="submit" class="submit-btn">Submit</button>
+        <a class="clear-link" id="clearLink">Clear form</a>
+      </div>
+
+      <div class="gform-footer">
+        Never submit passwords through this form.<br>
+        This content is neither created nor endorsed by Google.
+      </div>
+
+    </form>
+  </div>
+
+  <!-- ============ PAGE 2 : THANK YOU ============ -->
+  <div id="page2">
+    <div class="thanks-card fade-in">
+      <h1>Thank you!</h1>
+      <p>for answering my little "survey" hehe &lt;3</p>
+      <div class="heart">🌷</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast">I'll keep that in mind 🎬</div>
+
+<script>
+
+// ---------- Q6: Instagram shrinking "No" gag ----------
+const igYesBtn = document.getElementById('igYesBtn');
+const igNoBtn = document.getElementById('igNoBtn');
+const igMessage = document.getElementById('igMessage');
+const igTextboxWrap = document.getElementById('igTextboxWrap');
+const igHandleInput = document.getElementById('igHandleInput');
+const igError = document.getElementById('igError');
+const q6Hidden = document.getElementById('q6Hidden');
+
+// each stage: [message shown after this click, size in px for the No button]
+const noStages = [
+  { message: ':(', size: 14 },
+  { message: 'Are you sure?', size: 10 },
+  { message: 'Please?', size: 7 },
+  { message: "okay... T^T", size: 5 }
+];
+let noClickCount = 0;
+
+igNoBtn.addEventListener('click', () => {
+  igYesBtn.classList.remove('selected');
+  igNoBtn.classList.remove('no-selected'); // reset then reapply so it never stays filled
+  igTextboxWrap.style.display = 'none';
+  q6Hidden.value = 'no';
+  igError.textContent = 'This is a required question.';
+  igError.classList.remove('show');
+
+  const stage = noStages[Math.min(noClickCount, noStages.length - 1)];
+  igMessage.textContent = stage.message;
+  igNoBtn.style.width = stage.size + 'px';
+  igNoBtn.style.height = stage.size + 'px';
+  igNoBtn.classList.add('no-selected'); // outline only, background stays unfilled
+
+  if (noClickCount < noStages.length - 1) noClickCount++;
+});
+
+igYesBtn.addEventListener('click', () => {
+  igNoBtn.classList.remove('no-selected');
+  igYesBtn.classList.add('selected');
+  igMessage.textContent = '';
+  igTextboxWrap.style.display = 'block';
+  q6Hidden.value = 'yes';
+  igError.classList.remove('show');
+});
+
+// ---------- Submit -> page 2 ----------
+const surveyForm = document.getElementById('surveyForm');
+surveyForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+
+  // native "required" attributes handle Q1-Q5; Q6 is a custom widget
+  // (not a real radio group), so it needs its own check here.
+  if (!q6Hidden.value) {
+    igError.classList.add('show');
+    igError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+  if (q6Hidden.value === 'yes' && igHandleInput.value.trim() === '') {
+    igError.textContent = 'Please enter your Instagram handle.';
+    igError.classList.add('show');
+    igHandleInput.focus();
+    igHandleInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
+  document.getElementById('page1').style.display = 'none';
+  document.getElementById('page2').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+// ---------- Clear form ----------
+document.getElementById('clearLink').addEventListener('click', (e) => {
+  e.preventDefault();
+  surveyForm.reset();
+  igMessage.textContent = '';
+  igTextboxWrap.style.display = 'none';
+  igYesBtn.classList.remove('selected');
+  igNoBtn.classList.remove('selected');
+  igYesBtn.style.width = igYesBtn.style.height = '18px';
+  igNoBtn.style.width = igNoBtn.style.height = '18px';
+  noClickCount = 0;
+  toastShown = false;
+});
+</script>
+
+</body>
+</html>
